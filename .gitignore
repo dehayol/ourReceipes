@@ -1,7 +1,6 @@
 # Raw recipe source files
 *.pdf
 *.txt
-*.html
 
 # IDE
 .idea/

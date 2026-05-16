@@ -1,4 +1,6 @@
 import { getAllRecipes } from "@/lib/recipes";
+
+export const dynamic = "force-dynamic";
 import Header from "@/components/Header";
 import Link from "next/link";
 import AdminAuthGate from "@/components/AdminAuthGate";
