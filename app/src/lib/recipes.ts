@@ -6,15 +6,19 @@ const DATA_FILE = path.join(process.cwd(), "src", "data", "recipes.json");
 const RECIPES_KEY = "recipes";
 
 function useRedis() {
-  return !!(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+  return !!(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+}
+
+async function getRedis() {
+  const { Redis } = await import("@upstash/redis");
+  return new Redis({
+    url: process.env.KV_REST_API_URL!,
+    token: process.env.KV_REST_API_TOKEN!,
+  });
 }
 
 async function redisGet(): Promise<Recipe[]> {
-  const { Redis } = await import("@upstash/redis");
-  const redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL!,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-  });
+  const redis = await getRedis();
   const recipes = await redis.get<Recipe[]>(RECIPES_KEY);
   if (!recipes) {
     const seed = JSON.parse(fs.readFileSync(DATA_FILE, "utf-8")) as Recipe[];
@@ -25,11 +29,7 @@ async function redisGet(): Promise<Recipe[]> {
 }
 
 async function redisSet(recipes: Recipe[]): Promise<void> {
-  const { Redis } = await import("@upstash/redis");
-  const redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL!,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN!,
-  });
+  const redis = await getRedis();
   await redis.set(RECIPES_KEY, recipes);
 }
 

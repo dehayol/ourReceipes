@@ -37,8 +37,8 @@ En local, les recettes sont lues et écrites dans `src/data/recipes.json` et les
 |----------|-------------|-------------|
 | `ADMIN_PASSWORD` | ✅ | Mot de passe du backoffice |
 | `ANTHROPIC_API_KEY` | ✅ | Pour l'import de recettes via Claude |
-| `UPSTASH_REDIS_REST_URL` | Production | URL REST Upstash (injecté par Vercel) |
-| `UPSTASH_REDIS_REST_TOKEN` | Production | Token Upstash (injecté par Vercel) |
+| `KV_REST_API_URL` | Production | URL REST Upstash (injecté par Vercel) |
+| `KV_REST_API_TOKEN` | Production | Token Upstash (injecté par Vercel) |
 | `BLOB_READ_WRITE_TOKEN` | Production | Token Vercel Blob (injecté par Vercel) |
 
 ## Pages
