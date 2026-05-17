@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import PrintButton from "@/components/PrintButton";
 import DeleteButton from "@/components/DeleteButton";
+import AddToListButton from "@/components/AddToListButton";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -113,6 +114,7 @@ export default async function RecipePage({ params }: Props) {
 
           {/* Actions */}
           <div className="no-print" style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <AddToListButton recipeId={recipe.id} recipeServings={recipe.servings} />
             <PrintButton />
             <Link
               href={`/admin/edit/${recipe.id}`}
