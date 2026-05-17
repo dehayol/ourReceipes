@@ -8,18 +8,19 @@ interface Props {
   recipeServings: string; // e.g. "4 personnes"
 }
 
-type Status = "idle" | "open" | "loading" | "done" | "error";
+type Status = "idle" | "open" | "done" | "error";
 
 export default function AddToListButton({ recipeId, recipeServings }: Props) {
   const base = parseServings(recipeServings);
   const [status, setStatus] = useState<Status>("idle");
+  const [loading, setLoading] = useState(false);
   const [servings, setServings] = useState(base);
 
   const open = () => { setServings(base); setStatus("open"); };
   const close = () => setStatus("idle");
 
   const confirm = async () => {
-    setStatus("loading");
+    setLoading(true);
     try {
       const res = await fetch("/api/shopping-list", {
         method: "POST",
@@ -33,6 +34,8 @@ export default function AddToListButton({ recipeId, recipeServings }: Props) {
     } catch {
       setStatus("error");
       setTimeout(() => setStatus("idle"), 2500);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -162,15 +165,16 @@ export default function AddToListButton({ recipeId, recipeServings }: Props) {
               </button>
               <button
                 onClick={confirm}
-                disabled={status === "loading"}
+                disabled={loading}
                 style={{
                   flex: 2, padding: "12px", borderRadius: 100,
                   background: "var(--accent)", color: "white",
-                  border: "none", cursor: "pointer",
+                  border: "none", cursor: loading ? "not-allowed" : "pointer",
                   fontSize: 14, fontWeight: 600, fontFamily: "inherit",
+                  opacity: loading ? 0.7 : 1,
                 }}
               >
-                {status === "loading" ? "Ajout…" : "Ajouter"}
+                {loading ? "Ajout…" : "Ajouter"}
               </button>
             </div>
           </div>
