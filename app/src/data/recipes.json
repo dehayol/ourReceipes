@@ -1,5 +1,34 @@
 [
   {
+    "id": "citronnade",
+    "title": "Citronnade maison",
+    "category": "Bases",
+    "emoji": "🍋",
+    "description": "Une citronnade ultra fraîche et naturelle, prête en 5 minutes avec un blender. On mixe les citrons entiers avec la peau pour un goût bien plus intense qu'un simple jus pressé.",
+    "prepTime": "5 min",
+    "cookTime": "0 min",
+    "totalTime": "5 min",
+    "servings": "4 verres",
+    "difficulty": "Facile",
+    "image": null,
+    "tags": ["boisson", "citron", "rafraîchissant", "été", "sans cuisson"],
+    "ingredients": [
+      { "quantity": "2", "item": "citrons jaunes non traités, coupés en quartiers (avec la peau)" },
+      { "quantity": "700g", "item": "eau froide" },
+      { "quantity": "65g", "item": "sucre en poudre (à ajuster selon goût)" },
+      { "quantity": "6", "item": "glaçons" }
+    ],
+    "steps": [
+      "Couper les citrons en quartiers sans les éplucher — la peau apporte tout l'arôme.",
+      "Mettre les quartiers de citron, 350g d'eau froide et le sucre dans un blender. Mixer à pleine puissance pendant 15 à 20 secondes jusqu'à obtenir un mélange homogène.",
+      "Placer une passoire fine ou un chinois au-dessus d'une carafe. Verser le contenu du blender et presser à l'aide d'une cuillère pour extraire le maximum de liquide. Jeter la pulpe.",
+      "Ajouter les 350g d'eau froide restants dans la carafe et mélanger.",
+      "Ajouter les glaçons et servir aussitôt."
+    ],
+    "notes": "Préférez les petits citrons à la peau lisse et brillante : ils sont plus juteux et ont moins de pépins.\n\nSans blender : pressez les citrons, faites dissoudre le sucre dans un peu d'eau chaude (sirop), puis mélangez avec le jus et l'eau froide. Le résultat sera moins intense en goût mais tout aussi bon.\n\nVariantes : remplacez les citrons par 2 petites oranges ou 1 pamplemousse coupé en quartiers.",
+    "createdAt": "2026-05-17T15:30:00.000Z"
+  },
+  {
     "id": "cake-citron",
     "title": "Cake au citron et pavot",
     "category": "Desserts",
