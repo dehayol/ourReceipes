@@ -25,14 +25,15 @@ export default function DeleteButton({ recipeId }: Props) {
 
   if (confirming) {
     return (
-      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-        <span style={{ fontSize: 14, color: "var(--ink-soft)" }}>Supprimer ?</span>
+      <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+        <span style={{ fontSize: 13, color: "var(--ink-soft)" }}>Supprimer ?</span>
         <button
           onClick={handleDelete}
           style={{
-            padding: "8px 14px", borderRadius: 100,
+            padding: "8px 16px", borderRadius: 100,
             background: "#dc2626", color: "white",
-            border: "none", fontSize: 13, fontWeight: 500, cursor: "pointer",
+            border: "none", fontSize: 13, fontWeight: 600, cursor: "pointer",
+            fontFamily: "inherit",
           }}
         >
           Oui, supprimer
@@ -42,7 +43,8 @@ export default function DeleteButton({ recipeId }: Props) {
           style={{
             padding: "8px 14px", borderRadius: 100,
             background: "transparent", color: "var(--ink)",
-            border: "1px solid var(--line)", fontSize: 13, cursor: "pointer",
+            border: "1px solid var(--line)", fontSize: 13,
+            cursor: "pointer", fontFamily: "inherit", fontWeight: 500,
           }}
         >
           Annuler
@@ -59,7 +61,8 @@ export default function DeleteButton({ recipeId }: Props) {
         padding: "10px 18px", borderRadius: 100,
         border: "1px solid var(--line)",
         background: "transparent", color: "var(--ink-muted)",
-        fontSize: 14, fontWeight: 500, cursor: "pointer",
+        fontSize: 13, fontWeight: 500, cursor: "pointer",
+        fontFamily: "inherit",
       }}
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

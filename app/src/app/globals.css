@@ -1,27 +1,23 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #FAF7F2;
-  --bg-alt: #F2EDE4;
-  --ink: #1F1D1B;
-  --ink-soft: #5C5751;
-  --ink-muted: #908A82;
-  --line: #E8E0D2;
-  --accent: #C75B3C;
-  --accent-dark: #A8442A;
-  --shadow: 0 1px 2px rgba(31, 29, 27, 0.04), 0 8px 24px rgba(31, 29, 27, 0.06);
+  --bg: #fbfbf9;
+  --bg-alt: #f0eeea;
+  --ink: #000000;
+  --ink-soft: #444444;
+  --ink-muted: #888888;
+  --line: #e0ddd8;
+  --accent: #e33f07;
+  --accent-dark: #c23406;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Gantari', sans-serif;
   background: var(--bg);
   color: var(--ink);
   font-size: 16px;
@@ -30,161 +26,118 @@ body {
 }
 
 /* === ANIMATIONS === */
-
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
-
 @keyframes slideDown {
   from { opacity: 0; transform: translateY(-8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes scaleIn {
   from { opacity: 0; transform: scale(0.97); }
   to   { opacity: 1; transform: scale(1); }
 }
-
-/* Page entrance */
-.anim-fade-up {
-  animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-.anim-fade-in {
-  animation: fadeIn 0.4s ease both;
-}
-.anim-scale-in {
-  animation: scaleIn 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
-/* Staggered delays for grids */
-.anim-delay-1  { animation-delay: 0.05s; }
-.anim-delay-2  { animation-delay: 0.10s; }
-.anim-delay-3  { animation-delay: 0.15s; }
-.anim-delay-4  { animation-delay: 0.20s; }
-.anim-delay-5  { animation-delay: 0.25s; }
-.anim-delay-6  { animation-delay: 0.30s; }
-.anim-delay-7  { animation-delay: 0.35s; }
-.anim-delay-8  { animation-delay: 0.40s; }
-.anim-delay-9  { animation-delay: 0.45s; }
+.anim-fade-up   { animation: fadeUp   0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.anim-fade-in   { animation: fadeIn   0.4s ease both; }
+.anim-scale-in  { animation: scaleIn  0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.header-anim    { animation: slideDown 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.page-enter     { animation: fadeUp   0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
-/* Header slide down */
-.header-anim {
-  animation: slideDown 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+.anim-delay-1 { animation-delay: 0.05s; }
+.anim-delay-2 { animation-delay: 0.10s; }
+.anim-delay-3 { animation-delay: 0.15s; }
+.anim-delay-4 { animation-delay: 0.20s; }
+.anim-delay-5 { animation-delay: 0.25s; }
+.anim-delay-6 { animation-delay: 0.30s; }
+.anim-delay-7 { animation-delay: 0.35s; }
+.anim-delay-8 { animation-delay: 0.40s; }
+.anim-delay-9 { animation-delay: 0.45s; }
+
+/* Scroll utilitaire (masque la scrollbar) */
+.scroll-x {
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.scroll-x::-webkit-scrollbar { display: none; }
 
 /* Recipe card hover */
 .recipe-card-wrap {
-  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.recipe-card-wrap:hover {
-  transform: translateY(-6px);
+.recipe-card-wrap:hover { transform: translateY(-4px); }
+.recipe-card-wrap .card-img img {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.recipe-card-wrap .card-img {
-  overflow: hidden;
-  border-radius: 6px;
+.recipe-card-wrap:hover .card-img img { transform: scale(1.04); }
+
+/* Suggestion card hover */
+.suggestion-card {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.recipe-card-wrap .card-img img,
-.recipe-card-wrap .card-img > div {
-  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.recipe-card-wrap:hover .card-img img,
-.recipe-card-wrap:hover .card-img > div {
-  transform: scale(1.05);
-}
+.suggestion-card:hover { transform: translateY(-4px); }
 
 /* Category card hover */
 .cat-card {
-  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
-              border-color 0.2s ease,
-              box-shadow 0.25s ease;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
 }
 .cat-card:hover {
-  transform: translateY(-3px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow);
 }
 
-/* Button interactions */
+/* Buttons */
 .btn-primary {
-  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(199, 91, 60, 0.3);
-}
-.btn-primary:active {
-  transform: translateY(0);
-}
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
 
-/* Search input focus */
+/* Search input */
 .search-input {
-  transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
 }
 .search-input:focus {
   border-color: var(--accent) !important;
-  background: var(--bg) !important;
-  box-shadow: 0 0 0 3px rgba(199, 91, 60, 0.12);
+  box-shadow: 0 0 0 3px rgba(227, 63, 7, 0.1) !important;
 }
 
-/* Logo mark spin on hover */
-.logo-mark {
-  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-.logo-wrap:hover .logo-mark {
-  transform: rotate(15deg) scale(1.1);
-}
+/* Ingredient / step rows */
+.ingredient-row { animation: fadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.step-row       { animation: fadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
-/* Ingredient rows stagger */
-.ingredient-row {
-  animation: fadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
+/* Spinner */
+.spin { animation: spin 1s linear infinite; }
 
-/* Step rows stagger */
-.step-row {
-  animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
+/* Header icon hover */
+.header-icon-btn { transition: background 0.15s ease; }
+.header-icon-btn:hover { background: var(--bg-alt) !important; }
 
-/* Hero image float */
-.hero-img-wrap {
-  animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
-}
-
-/* Page-level wrapper */
-.page-enter {
-  animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
+/* Print */
 @media print {
   body { background: white !important; font-size: 12pt; }
   header, footer, nav, .no-print { display: none !important; }
   .print-only { display: block !important; }
   a { text-decoration: none !important; color: inherit !important; }
   @page { margin: 2cm; size: A4; }
-
-  /* Recette : mise en page propre A4 */
-  main {
-    max-width: 100% !important;
-    padding: 0 !important;
-  }
-
-  h1 {
-    font-size: 24pt !important;
-    margin-bottom: 8pt !important;
-  }
-
-  /* Grille ingrédients + étapes côte à côte */
+  main { max-width: 100% !important; padding: 0 !important; }
+  h1 { font-size: 24pt !important; margin-bottom: 8pt !important; }
   .recipe-content-grid {
     display: grid !important;
     grid-template-columns: 1fr 2fr !important;
     gap: 24pt !important;
   }
-
-  /* Couleurs sobres pour l'impression */
   :root {
     --accent: #333 !important;
     --ink: #000 !important;
@@ -194,7 +147,12 @@ body {
     --bg-alt: #f5f5f5 !important;
     --line: #ddd !important;
   }
-
-  /* Pas de coupure de page dans les étapes */
   li { page-break-inside: avoid; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -15,30 +15,39 @@ export default async function NewRecipePage({ searchParams }: Props) {
     <>
       <Header />
       <AdminAuthGate>
-        <main style={{ maxWidth: 1000, margin: "0 auto", padding: "48px 32px 80px" }}>
-          <nav style={{ marginBottom: 32, fontSize: 14, color: "var(--ink-muted)" }}>
-            <Link href="/admin" style={{ color: "var(--ink-muted)", textDecoration: "none" }}>Backoffice</Link>
+        <main style={{ maxWidth: 900, margin: "0 auto", padding: "32px 20px 80px" }}>
+          <nav style={{ marginBottom: 28, fontSize: 13, color: "var(--ink-muted)" }}>
+            <Link href="/admin" style={{ color: "var(--ink-muted)", textDecoration: "none" }}>
+              Backoffice
+            </Link>
             <span style={{ margin: "0 8px" }}>›</span>
             <span style={{ color: "var(--ink)" }}>Nouvelle recette</span>
           </nav>
-          <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 40 }}>
-            <h1 style={{ fontFamily: "'Fraunces', serif", fontSize: 40, fontWeight: 400, letterSpacing: "-0.02em" }}>
+
+          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 36 }}>
+            <h1 style={{ fontSize: 32, fontWeight: 700, letterSpacing: "-0.02em" }}>
               {isImport ? "Recette importée" : "Nouvelle recette"}
             </h1>
             {isImport && (
               <span style={{
                 padding: "4px 12px", borderRadius: 100,
-                background: "rgba(199, 91, 60, 0.1)", color: "var(--accent)",
-                fontSize: 13, fontWeight: 500,
+                background: "rgba(227, 63, 7, 0.1)", color: "var(--accent)",
+                fontSize: 13, fontWeight: 600,
               }}>
                 ✨ Prérempli par Claude
               </span>
             )}
           </div>
+
           <NewRecipeClient isImport={isImport} />
         </main>
       </AdminAuthGate>
-      <footer style={{ borderTop: "1px solid var(--line)", padding: 32, textAlign: "center", fontSize: 13, color: "var(--ink-muted)" }}>
+
+      <footer style={{
+        borderTop: "1px solid var(--line)",
+        padding: "24px 20px", textAlign: "center",
+        fontSize: 13, color: "var(--ink-muted)",
+      }}>
         Mijoté · Backoffice
       </footer>
     </>

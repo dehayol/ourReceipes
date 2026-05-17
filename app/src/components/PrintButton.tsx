@@ -8,8 +8,8 @@ export default function PrintButton() {
         display: "inline-flex", alignItems: "center", gap: 6,
         padding: "10px 18px", borderRadius: 100,
         background: "var(--ink)", color: "white",
-        border: "none", fontSize: 14, fontWeight: 500,
-        cursor: "pointer",
+        border: "none", fontSize: 13, fontWeight: 600,
+        cursor: "pointer", fontFamily: "inherit",
       }}
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

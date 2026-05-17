@@ -11,21 +11,17 @@ export default function RecipeCard({ recipe }: Props) {
     <Link
       href={`/recettes/${recipe.id}`}
       className="recipe-card-wrap"
-      style={{
-        cursor: "pointer",
-        textDecoration: "none",
-        color: "inherit",
-        display: "block",
-      }}
+      style={{ display: "block", textDecoration: "none" }}
     >
       <div
         className="card-img"
         style={{
           position: "relative",
-          aspectRatio: "4 / 3",
-          borderRadius: 6,
+          borderRadius: 10,
+          border: "1px solid var(--accent)",
+          overflow: "hidden",
+          aspectRatio: "3 / 4",
           background: "var(--bg-alt)",
-          marginBottom: 16,
         }}
       >
         {recipe.image ? (
@@ -33,65 +29,51 @@ export default function RecipeCard({ recipe }: Props) {
             src={recipe.image}
             alt={recipe.title}
             fill
-            style={{ objectFit: "cover", transition: "transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)" }}
+            style={{ objectFit: "cover" }}
           />
         ) : (
-          <div
-            style={{
-              width: "100%",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: 56,
-              background: "var(--bg-alt)",
-              transition: "transform 0.55s cubic-bezier(0.22, 1, 0.36, 1)",
-            }}
-          >
+          <div style={{
+            position: "absolute", inset: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            fontSize: 64, background: "var(--bg-alt)",
+          }}>
             {recipe.emoji}
           </div>
         )}
-      </div>
 
-      <div
-        style={{
-          fontSize: 11,
-          textTransform: "uppercase",
-          letterSpacing: "0.1em",
-          color: "var(--accent)",
-          fontWeight: 500,
-          marginBottom: 6,
-          transition: "letter-spacing 0.2s ease",
-        }}
-      >
-        {recipe.category}
-      </div>
+        {/* Gradient overlay */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to bottom, transparent 45%, rgba(255,255,255,0.6) 100%)",
+          pointerEvents: "none",
+        }} />
 
-      <h3
-        style={{
-          fontFamily: "'Fraunces', serif",
-          fontSize: 22,
-          fontWeight: 400,
-          lineHeight: 1.2,
-          letterSpacing: "-0.01em",
-          marginBottom: 10,
-        }}
-      >
-        {recipe.title}
-      </h3>
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 14,
-          fontSize: 13,
-          color: "var(--ink-muted)",
-        }}
-      >
-        <span>{recipe.totalTime}</span>
-        <span>·</span>
-        <span>{recipe.servings}</span>
+        {/* Text info at bottom */}
+        <div style={{
+          position: "absolute", bottom: 0, left: 0, right: 0,
+          padding: "10px 12px",
+          display: "flex", flexDirection: "column", gap: 3,
+        }}>
+          <span style={{
+            fontSize: 11, fontWeight: 300, color: "var(--accent)",
+            lineHeight: 1.3,
+          }}>
+            {recipe.category}
+          </span>
+          <span style={{
+            fontSize: 13, fontWeight: 600, color: "var(--ink)",
+            lineHeight: 1.3,
+          }}>
+            {recipe.title}
+          </span>
+          <div style={{
+            display: "flex", gap: 16,
+            fontSize: 11, fontWeight: 500, color: "var(--accent)",
+          }}>
+            <span>{recipe.totalTime}</span>
+            <span>{recipe.servings}</span>
+          </div>
+        </div>
       </div>
     </Link>
   );

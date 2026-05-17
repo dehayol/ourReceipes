@@ -9,28 +9,29 @@ const DIFFICULTIES = ["Très facile", "Facile", "Intermédiaire", "Difficile"];
 const STORAGE_KEY = "mijote_admin_auth";
 
 const LABEL: React.CSSProperties = {
-  display: "block", fontSize: 12, fontWeight: 600,
+  display: "block", fontSize: 11, fontWeight: 700,
   textTransform: "uppercase", letterSpacing: "0.08em",
   color: "var(--ink-muted)", marginBottom: 6,
 };
 
 const INPUT: React.CSSProperties = {
-  width: "100%", padding: "10px 14px",
-  border: "1px solid var(--line)", borderRadius: 8,
-  fontSize: 15, fontFamily: "inherit",
-  background: "var(--bg)", color: "var(--ink)", outline: "none",
+  width: "100%", padding: "11px 14px",
+  border: "1px solid var(--line)", borderRadius: 10,
+  fontSize: 14, fontFamily: "inherit",
+  background: "var(--bg)", color: "var(--ink)",
+  outline: "none", transition: "border-color 0.2s",
 };
 
 const SECTION: React.CSSProperties = {
   background: "var(--bg)", border: "1px solid var(--line)",
-  borderRadius: 12, padding: "28px 32px", marginBottom: 24,
+  borderRadius: 12, padding: "24px 24px", marginBottom: 20,
 };
 
 function slugify(str: string) {
   return str
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
@@ -71,7 +72,6 @@ export default function RecipeForm({ recipe, mode }: Props) {
   const set = (key: keyof Recipe, value: Recipe[keyof Recipe]) =>
     setForm((f) => ({ ...f, [key]: value }));
 
-  // Ingredients
   const addIngredient = () => set("ingredients", [...form.ingredients, { quantity: "", item: "" }]);
   const removeIngredient = (i: number) =>
     set("ingredients", form.ingredients.filter((_, idx) => idx !== i));
@@ -81,7 +81,6 @@ export default function RecipeForm({ recipe, mode }: Props) {
     set("ingredients", updated);
   };
 
-  // Steps
   const addStep = () => set("steps", [...form.steps, ""]);
   const removeStep = (i: number) => set("steps", form.steps.filter((_, idx) => idx !== i));
   const updateStep = (i: number, value: string) => {
@@ -90,7 +89,6 @@ export default function RecipeForm({ recipe, mode }: Props) {
     set("steps", updated);
   };
 
-  // Image upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -140,20 +138,32 @@ export default function RecipeForm({ recipe, mode }: Props) {
     }
   };
 
+  const iconBtn: React.CSSProperties = {
+    width: 30, height: 30, borderRadius: "50%",
+    border: "1px solid var(--line)", background: "transparent",
+    color: "var(--ink-muted)", cursor: "pointer", fontSize: 16,
+    display: "flex", alignItems: "center", justifyContent: "center",
+    flexShrink: 0,
+  };
+
   return (
     <form onSubmit={handleSubmit} style={{ maxWidth: 800 }}>
 
       {/* Infos générales */}
       <div style={SECTION}>
-        <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 400, marginBottom: 24 }}>
-          Infos générales
-        </h2>
-        <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+        <h2 style={{ fontSize: 17, fontWeight: 700, marginBottom: 20 }}>Infos générales</h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
           <div>
             <label style={LABEL}>Titre *</label>
-            <input style={INPUT} value={form.title} onChange={(e) => set("title", e.target.value)} placeholder="Ex: Tarte tatin à la pomme" required />
+            <input
+              style={INPUT}
+              value={form.title}
+              onChange={(e) => set("title", e.target.value)}
+              placeholder="Ex: Tarte tatin à la pomme"
+              required
+            />
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+          <div className="form-two-col">
             <div>
               <label style={LABEL}>Catégorie *</label>
               <select style={INPUT} value={form.category} onChange={(e) => set("category", e.target.value)}>
@@ -162,7 +172,12 @@ export default function RecipeForm({ recipe, mode }: Props) {
             </div>
             <div>
               <label style={LABEL}>Emoji</label>
-              <input style={INPUT} value={form.emoji} onChange={(e) => set("emoji", e.target.value)} placeholder="🍽️" />
+              <input
+                style={INPUT}
+                value={form.emoji}
+                onChange={(e) => set("emoji", e.target.value)}
+                placeholder="🍽️"
+              />
             </div>
           </div>
           <div>
@@ -188,10 +203,8 @@ export default function RecipeForm({ recipe, mode }: Props) {
 
       {/* Temps & portions */}
       <div style={SECTION}>
-        <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 400, marginBottom: 24 }}>
-          Temps et portions
-        </h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 16 }}>
+        <h2 style={{ fontSize: 17, fontWeight: 700, marginBottom: 20 }}>Temps et portions</h2>
+        <div className="form-two-col">
           <div>
             <label style={LABEL}>Temps de préparation *</label>
             <input style={INPUT} value={form.prepTime} onChange={(e) => set("prepTime", e.target.value)} placeholder="Ex: 20 min" required />
@@ -219,54 +232,59 @@ export default function RecipeForm({ recipe, mode }: Props) {
 
       {/* Photo */}
       <div style={SECTION}>
-        <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 400, marginBottom: 24 }}>
-          Photo
-        </h2>
+        <h2 style={{ fontSize: 17, fontWeight: 700, marginBottom: 20 }}>Photo</h2>
         {form.image && (
-          <div style={{ marginBottom: 16, borderRadius: 8, overflow: "hidden", maxHeight: 200 }}>
+          <div style={{
+            marginBottom: 14, borderRadius: 10,
+            border: "1px solid var(--accent)",
+            overflow: "hidden", maxHeight: 200,
+          }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={form.image} alt="Aperçu" style={{ width: "100%", height: 200, objectFit: "cover" }} />
           </div>
         )}
         <input ref={fileRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: "none" }} />
-        <button
-          type="button"
-          onClick={() => fileRef.current?.click()}
-          disabled={uploadingImage}
-          style={{
-            padding: "10px 20px", borderRadius: 100,
-            border: "1px solid var(--line)",
-            background: "transparent", color: "var(--ink)",
-            fontSize: 14, cursor: "pointer", fontFamily: "inherit",
-          }}
-        >
-          {uploadingImage ? "Upload en cours..." : form.image ? "Changer la photo" : "Uploader une photo"}
-        </button>
-        {form.image && (
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <button
             type="button"
-            onClick={() => set("image", null)}
+            onClick={() => fileRef.current?.click()}
+            disabled={uploadingImage}
             style={{
-              marginLeft: 8, padding: "10px 20px", borderRadius: 100,
-              border: "1px solid var(--line)", background: "transparent",
-              color: "var(--ink-muted)", fontSize: 14, cursor: "pointer", fontFamily: "inherit",
+              padding: "10px 20px", borderRadius: 100,
+              border: "1px solid var(--line)",
+              background: "transparent", color: "var(--ink)",
+              fontSize: 14, cursor: uploadingImage ? "not-allowed" : "pointer",
+              fontFamily: "inherit", opacity: uploadingImage ? 0.6 : 1,
+              fontWeight: 500,
             }}
           >
-            Supprimer la photo
+            {uploadingImage ? "Upload en cours..." : form.image ? "Changer la photo" : "Uploader une photo"}
           </button>
-        )}
+          {form.image && (
+            <button
+              type="button"
+              onClick={() => set("image", null)}
+              style={{
+                padding: "10px 20px", borderRadius: 100,
+                border: "1px solid var(--line)", background: "transparent",
+                color: "var(--ink-muted)", fontSize: 14,
+                cursor: "pointer", fontFamily: "inherit", fontWeight: 500,
+              }}
+            >
+              Supprimer la photo
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Ingrédients */}
       <div style={SECTION}>
-        <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 400, marginBottom: 24 }}>
-          Ingrédients
-        </h2>
+        <h2 style={{ fontSize: 17, fontWeight: 700, marginBottom: 20 }}>Ingrédients</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {form.ingredients.map((ing, i) => (
             <div key={i} style={{ display: "flex", gap: 10, alignItems: "center" }}>
               <input
-                style={{ ...INPUT, maxWidth: 140 }}
+                style={{ ...INPUT, maxWidth: 130 }}
                 value={ing.quantity}
                 onChange={(e) => updateIngredient(i, "quantity", e.target.value)}
                 placeholder="Quantité"
@@ -278,19 +296,7 @@ export default function RecipeForm({ recipe, mode }: Props) {
                 placeholder="Ingrédient"
               />
               {form.ingredients.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeIngredient(i)}
-                  style={{
-                    width: 32, height: 32, borderRadius: "50%",
-                    border: "1px solid var(--line)", background: "transparent",
-                    color: "var(--ink-muted)", cursor: "pointer", fontSize: 18,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    flexShrink: 0,
-                  }}
-                >
-                  ×
-                </button>
+                <button type="button" onClick={() => removeIngredient(i)} style={iconBtn}>×</button>
               )}
             </div>
           ))}
@@ -302,7 +308,7 @@ export default function RecipeForm({ recipe, mode }: Props) {
             marginTop: 12, padding: "8px 16px", borderRadius: 100,
             border: "1px dashed var(--line)", background: "transparent",
             color: "var(--ink-soft)", fontSize: 13, cursor: "pointer",
-            fontFamily: "inherit",
+            fontFamily: "inherit", fontWeight: 500,
           }}
         >
           + Ajouter un ingrédient
@@ -311,18 +317,15 @@ export default function RecipeForm({ recipe, mode }: Props) {
 
       {/* Étapes */}
       <div style={SECTION}>
-        <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 400, marginBottom: 24 }}>
-          Étapes de préparation
-        </h2>
+        <h2 style={{ fontSize: 17, fontWeight: 700, marginBottom: 20 }}>Étapes de préparation</h2>
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           {form.steps.map((step, i) => (
             <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
               <span style={{
                 minWidth: 28, height: 28, borderRadius: "50%",
-                background: "var(--bg-alt)", border: "1px solid var(--line)",
+                background: "var(--accent)", color: "white",
                 display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 13, fontWeight: 600, color: "var(--ink-muted)",
-                marginTop: 10, flexShrink: 0,
+                fontSize: 12, fontWeight: 700, flexShrink: 0, marginTop: 11,
               }}>
                 {i + 1}
               </span>
@@ -336,13 +339,7 @@ export default function RecipeForm({ recipe, mode }: Props) {
                 <button
                   type="button"
                   onClick={() => removeStep(i)}
-                  style={{
-                    width: 32, height: 32, borderRadius: "50%",
-                    border: "1px solid var(--line)", background: "transparent",
-                    color: "var(--ink-muted)", cursor: "pointer", fontSize: 18,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    flexShrink: 0, marginTop: 10,
-                  }}
+                  style={{ ...iconBtn, marginTop: 11 }}
                 >
                   ×
                 </button>
@@ -357,7 +354,7 @@ export default function RecipeForm({ recipe, mode }: Props) {
             marginTop: 12, padding: "8px 16px", borderRadius: 100,
             border: "1px dashed var(--line)", background: "transparent",
             color: "var(--ink-soft)", fontSize: 13, cursor: "pointer",
-            fontFamily: "inherit",
+            fontFamily: "inherit", fontWeight: 500,
           }}
         >
           + Ajouter une étape
@@ -366,9 +363,7 @@ export default function RecipeForm({ recipe, mode }: Props) {
 
       {/* Notes */}
       <div style={SECTION}>
-        <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 400, marginBottom: 24 }}>
-          Notes &amp; conseils
-        </h2>
+        <h2 style={{ fontSize: 17, fontWeight: 700, marginBottom: 20 }}>Notes &amp; conseils</h2>
         <textarea
           style={{ ...INPUT, minHeight: 100, resize: "vertical" }}
           value={form.notes ?? ""}
@@ -378,37 +373,53 @@ export default function RecipeForm({ recipe, mode }: Props) {
       </div>
 
       {/* Submit */}
-      {error && (
-        <p style={{ color: "#dc2626", fontSize: 14, marginBottom: 16 }}>{error}</p>
-      )}
-      <div style={{ display: "flex", gap: 12 }}>
+      {error && <p style={{ color: "#dc2626", fontSize: 14, marginBottom: 16 }}>{error}</p>}
+      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
         <button
           type="submit"
           disabled={saving}
+          className="btn-primary"
           style={{
-            padding: "14px 32px", borderRadius: 100,
+            padding: "13px 32px", borderRadius: 100,
             background: "var(--accent)", color: "white",
-            border: "none", fontSize: 15, fontWeight: 500,
+            border: "none", fontSize: 15, fontWeight: 600,
             cursor: saving ? "not-allowed" : "pointer",
-            opacity: saving ? 0.7 : 1,
-            fontFamily: "inherit",
+            opacity: saving ? 0.7 : 1, fontFamily: "inherit",
           }}
         >
-          {saving ? "Sauvegarde..." : mode === "create" ? "Publier la recette" : "Sauvegarder les modifications"}
+          {saving ? "Sauvegarde..." : mode === "create" ? "Publier la recette" : "Sauvegarder"}
         </button>
         <button
           type="button"
           onClick={() => router.back()}
           style={{
-            padding: "14px 24px", borderRadius: 100,
+            padding: "13px 24px", borderRadius: 100,
             border: "1px solid var(--line)", background: "transparent",
-            color: "var(--ink)", fontSize: 15, cursor: "pointer", fontFamily: "inherit",
+            color: "var(--ink)", fontSize: 15, cursor: "pointer",
+            fontFamily: "inherit", fontWeight: 500,
           }}
         >
           Annuler
         </button>
       </div>
 
+      <style>{`
+        .form-two-col {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+        @media (min-width: 480px) {
+          .form-two-col {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+        input:focus, select:focus, textarea:focus {
+          border-color: var(--accent) !important;
+          box-shadow: 0 0 0 3px rgba(227, 63, 7, 0.1);
+          outline: none;
+        }
+      `}</style>
     </form>
   );
 }
