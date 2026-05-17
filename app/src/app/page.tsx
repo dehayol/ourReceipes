@@ -208,11 +208,31 @@ export default async function HomePage({ searchParams }: Props) {
         borderTop: "1px solid var(--line)",
         padding: 32, textAlign: "center",
         fontSize: 13, color: "var(--ink-muted)",
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 20,
       }} className="anim-fade-in">
-        Mijoté · Notre livre de recettes maison
+        <span>Mijoté · Notre livre de recettes maison</span>
+        <a
+          href="/api/export"
+          download
+          title="Télécharger une sauvegarde de toutes les recettes"
+          className="footer-backup-link"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Sauvegarde
+        </a>
       </footer>
 
       <style>{`
+        .footer-backup-link {
+          display: inline-flex; align-items: center; gap: 5px;
+          color: var(--ink-muted); text-decoration: none; opacity: 0.5;
+          transition: opacity 0.15s;
+        }
+        .footer-backup-link:hover { opacity: 1; }
         @media (max-width: 980px) {
           .hero-grid { grid-template-columns: 1fr !important; }
           .cat-grid { grid-template-columns: repeat(3, 1fr) !important; }
