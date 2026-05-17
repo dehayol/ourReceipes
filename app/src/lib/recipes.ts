@@ -20,11 +20,22 @@ async function getRedis() {
 async function redisGet(): Promise<Recipe[]> {
   const redis = await getRedis();
   const recipes = await redis.get<Recipe[]>(RECIPES_KEY);
+  const jsonRecipes = JSON.parse(fs.readFileSync(DATA_FILE, "utf-8")) as Recipe[];
+
   if (!recipes) {
-    const seed = JSON.parse(fs.readFileSync(DATA_FILE, "utf-8")) as Recipe[];
-    await redis.set(RECIPES_KEY, seed);
-    return seed;
+    await redis.set(RECIPES_KEY, jsonRecipes);
+    return jsonRecipes;
   }
+
+  // Merge: add recipes from JSON that aren't yet in Redis (matched by id)
+  const redisIds = new Set(recipes.map((r) => r.id));
+  const newOnes = jsonRecipes.filter((r) => !redisIds.has(r.id));
+  if (newOnes.length > 0) {
+    const merged = [...newOnes, ...recipes];
+    await redis.set(RECIPES_KEY, merged);
+    return merged;
+  }
+
   return recipes;
 }
 
