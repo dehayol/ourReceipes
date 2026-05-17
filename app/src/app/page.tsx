@@ -1,6 +1,7 @@
 import { getAllRecipes, getCategories, CATEGORY_EMOJIS } from "@/lib/recipes";
 import Header from "@/components/Header";
 import RecipeCard from "@/components/RecipeCard";
+import HeroCarousel from "@/components/HeroCarousel";
 import Link from "next/link";
 
 interface Props {
@@ -15,6 +16,14 @@ export default async function HomePage({ searchParams }: Props) {
   const allRecipes = await getAllRecipes();
   const categories = getCategories();
 
+  const suggestions = allRecipes.slice(0, 6);
+
+  // Bento grid : 5 colonnes × 2 recettes = 10 max
+  const bentoRecipes = allRecipes.slice(0, 10);
+  const bentoColumns = Array.from({ length: 5 }, (_, colIdx) =>
+    [bentoRecipes[colIdx * 2], bentoRecipes[colIdx * 2 + 1]].filter(Boolean)
+  ).filter((col) => col.length > 0);
+
   const filtered = allRecipes.filter((r) => {
     const matchQ =
       !q ||
@@ -26,202 +35,346 @@ export default async function HomePage({ searchParams }: Props) {
     return matchQ && matchCat;
   });
 
-  const featured = allRecipes[0];
+  const isDefault = !q && !categoryFilter;
 
   return (
     <>
       <Header />
 
-      <main style={{ maxWidth: 1280, margin: "0 auto", padding: "48px 32px 80px" }}>
+      <main style={{ maxWidth: 1280, margin: "0 auto", padding: "24px 20px 80px" }}>
 
-        {/* HERO */}
-        {!q && !categoryFilter && featured && (
-          <section style={{
-            display: "grid",
-            gridTemplateColumns: "1.1fr 1fr",
-            gap: 48,
-            alignItems: "center",
-            marginBottom: 64,
-            padding: "8px 0 24px",
-          }}>
-            <div className="anim-fade-up">
-              <div style={{
-                display: "inline-flex", alignItems: "center", gap: 8,
-                fontSize: 12, fontWeight: 500,
-                textTransform: "uppercase", letterSpacing: "0.12em",
-                color: "var(--accent)", marginBottom: 20,
-              }}>
-                <span style={{ width: 24, height: 1, background: "var(--accent)", display: "inline-block" }} />
-                Dernière recette ajoutée
-              </div>
-              <h1 style={{
-                fontFamily: "'Fraunces', serif",
-                fontSize: "clamp(40px, 5vw, 64px)",
-                fontWeight: 400,
-                lineHeight: 1.02,
-                letterSpacing: "-0.025em",
-                marginBottom: 24,
-              }}>
-                {featured.title}
-              </h1>
-              <p style={{ color: "var(--ink-soft)", fontSize: 17, maxWidth: 480, marginBottom: 28 }}>
-                {featured.description}
-              </p>
-              <div style={{ display: "flex", alignItems: "center", gap: 24, fontSize: 14, color: "var(--ink-soft)" }}>
-                <span>⏱ {featured.totalTime}</span>
-                <span>👥 {featured.servings}</span>
-                <span>📊 {featured.difficulty}</span>
-              </div>
+        {/* Category tags — toujours visibles */}
+        <div
+          className="scroll-x anim-fade-in"
+          style={{ display: "flex", gap: 10, marginBottom: 32, paddingBottom: 4 }}
+        >
+          <Link
+            href="/"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 6,
+              padding: "8px 16px", borderRadius: 10, flexShrink: 0,
+              textDecoration: "none", fontSize: 13, fontWeight: 600,
+              background: isDefault ? "var(--accent)" : "transparent",
+              color: isDefault ? "white" : "var(--ink)",
+              border: "1px solid var(--accent)",
+              transition: "background 0.15s, color 0.15s",
+            }}
+          >
+            Tout voir
+          </Link>
+          {categories.map((cat) => {
+            const isActive = categoryFilter === cat;
+            return (
               <Link
-                href={`/recettes/${featured.id}`}
-                className="btn-primary"
+                key={cat}
+                href={isActive ? "/" : `/?category=${encodeURIComponent(cat)}`}
                 style={{
-                  display: "inline-flex", alignItems: "center", gap: 8,
-                  marginTop: 28,
-                  background: "var(--accent)", color: "white",
-                  padding: "12px 24px", borderRadius: 100,
-                  textDecoration: "none", fontSize: 14, fontWeight: 500,
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                  padding: "8px 14px", borderRadius: 10, flexShrink: 0,
+                  textDecoration: "none", fontSize: 13, fontWeight: 600,
+                  background: isActive ? "var(--accent)" : "transparent",
+                  color: isActive ? "white" : "var(--ink)",
+                  border: "1px solid var(--accent)",
+                  whiteSpace: "nowrap",
+                  transition: "background 0.15s, color 0.15s",
                 }}
               >
-                Voir la recette
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M5 12h14" /><path d="m12 5 7 7-7 7" />
-                </svg>
+                <span>{CATEGORY_EMOJIS[cat]}</span>
+                {cat}
               </Link>
-            </div>
-            <div className="hero-img-wrap" style={{
-              position: "relative", aspectRatio: "4 / 5",
-              borderRadius: 8, overflow: "hidden",
-              background: "var(--bg-alt)", boxShadow: "var(--shadow)",
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 120,
-            }}>
-              {featured.image ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={featured.image} alt={featured.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              ) : (
-                featured.emoji
-              )}
-            </div>
-          </section>
-        )}
+            );
+          })}
+        </div>
 
-        {/* CATEGORIES */}
-        {!q && (
-          <section style={{ marginBottom: 64 }} className="anim-fade-up anim-delay-2">
-            <div style={{
-              display: "flex", alignItems: "baseline", justifyContent: "space-between",
-              marginBottom: 28, paddingBottom: 16, borderBottom: "1px solid var(--line)",
-            }}>
-              <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 28, fontWeight: 400, letterSpacing: "-0.015em" }}>
-                Catégories
+        {/* === SEARCH RESULTS === */}
+        {q && (
+          <section className="anim-fade-up">
+            <div style={{ marginBottom: 24, display: "flex", alignItems: "baseline", gap: 12 }}>
+              <h2 style={{ fontSize: 22, fontWeight: 700 }}>
+                Résultats pour « {params.q} »
               </h2>
-              {categoryFilter && (
-                <Link href="/" style={{ fontSize: 13, color: "var(--ink-soft)", textDecoration: "none", fontWeight: 500 }}>
-                  Voir tout
+              <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
+                {filtered.length} recette{filtered.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+            {filtered.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "60px 0", color: "var(--ink-muted)" }}>
+                <div style={{ fontSize: 40, marginBottom: 12 }}>🔍</div>
+                <p style={{ fontSize: 16, marginBottom: 16 }}>Aucune recette trouvée.</p>
+                <Link href="/" style={{
+                  color: "var(--accent)", textDecoration: "none",
+                  fontWeight: 600, fontSize: 14,
+                }}>
+                  Voir toutes les recettes
                 </Link>
-              )}
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 12 }}>
-              {categories.map((cat, i) => {
-                const count = allRecipes.filter((r) => r.category === cat).length;
-                const isActive = categoryFilter === cat;
-                return (
-                  <Link
-                    key={cat}
-                    href={isActive ? "/" : `/?category=${encodeURIComponent(cat)}`}
-                    className={`cat-card anim-fade-up anim-delay-${i + 1}`}
-                    style={{
-                      background: isActive ? "var(--accent)" : "var(--bg)",
-                      border: `1px solid ${isActive ? "var(--accent)" : "var(--line)"}`,
-                      borderRadius: 12,
-                      padding: "22px 16px",
-                      textAlign: "center",
-                      textDecoration: "none",
-                      color: isActive ? "white" : "var(--ink)",
-                      display: "flex", flexDirection: "column", alignItems: "center", gap: 12,
-                    }}
-                  >
-                    <span style={{
-                      width: 44, height: 44, borderRadius: "50%",
-                      background: isActive ? "rgba(255,255,255,0.2)" : "var(--bg-alt)",
-                      display: "inline-flex", alignItems: "center", justifyContent: "center",
-                      fontSize: 22,
-                      transition: "transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-                    }}>
-                      {CATEGORY_EMOJIS[cat]}
-                    </span>
-                    <span style={{ fontSize: 14, fontWeight: 500 }}>{cat}</span>
-                    <span style={{ fontSize: 12, opacity: 0.7 }}>
-                      {count} recette{count !== 1 ? "s" : ""}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
+              </div>
+            ) : (
+              <div className="recipe-grid">
+                {filtered.map((recipe, i) => (
+                  <div key={recipe.id} className={`anim-fade-up anim-delay-${Math.min(i + 1, 9)}`}>
+                    <RecipeCard recipe={recipe} />
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         )}
 
-        {/* RECIPE GRID */}
-        <section className="anim-fade-up anim-delay-3">
-          <div style={{
-            display: "flex", alignItems: "baseline", justifyContent: "space-between",
-            marginBottom: 28, paddingBottom: 16, borderBottom: "1px solid var(--line)",
-          }}>
-            <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 28, fontWeight: 400, letterSpacing: "-0.015em" }}>
-              {q ? `Résultats pour "${params.q}"` : categoryFilter ? categoryFilter : "Toutes les recettes"}
-            </h2>
-            <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
-              {filtered.length} recette{filtered.length !== 1 ? "s" : ""}
-            </span>
-          </div>
-
-          {filtered.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "80px 0", color: "var(--ink-muted)" }} className="anim-fade-in">
-              <div style={{ fontSize: 48, marginBottom: 16 }}>🔍</div>
-              <p style={{ fontSize: 17 }}>Aucune recette trouvée.</p>
-              <Link href="/" style={{ color: "var(--accent)", textDecoration: "none", marginTop: 12, display: "inline-block" }}>
-                Voir toutes les recettes
-              </Link>
+        {/* === CATEGORY FILTER === */}
+        {!q && categoryFilter && (
+          <section className="anim-fade-up">
+            <div style={{ marginBottom: 24 }}>
+              <h2 style={{ fontSize: 22, fontWeight: 700 }}>
+                {CATEGORY_EMOJIS[categoryFilter]} {categoryFilter}
+              </h2>
+              <p style={{ fontSize: 13, color: "var(--ink-muted)", marginTop: 4 }}>
+                {filtered.length} recette{filtered.length !== 1 ? "s" : ""}
+              </p>
             </div>
-          ) : (
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "32px 28px",
-            }}>
-              {filtered.map((recipe, i) => (
-                <div
-                  key={recipe.id}
-                  className={`anim-fade-up anim-delay-${Math.min(i + 1, 9)}`}
-                >
-                  <RecipeCard recipe={recipe} />
+            {filtered.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "60px 0", color: "var(--ink-muted)" }}>
+                <p>Aucune recette dans cette catégorie.</p>
+              </div>
+            ) : (
+              <div className="recipe-grid">
+                {filtered.map((recipe, i) => (
+                  <div key={recipe.id} className={`anim-fade-up anim-delay-${Math.min(i + 1, 9)}`}>
+                    <RecipeCard recipe={recipe} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* === DEFAULT HOMEPAGE === */}
+        {isDefault && (
+          <>
+            {/* Hero carousel */}
+            {suggestions.length > 0 && (
+              <div className="anim-fade-up" style={{ marginBottom: 48 }}>
+                <HeroCarousel recipes={suggestions} />
+              </div>
+            )}
+
+            {/* Catégories */}
+            <section style={{ marginBottom: 48 }} className="anim-fade-up anim-delay-2">
+              <div style={{
+                display: "flex", alignItems: "center",
+                justifyContent: "space-between", marginBottom: 16,
+              }}>
+                <h2 style={{ fontSize: 20, fontWeight: 700 }}>Catégories</h2>
+                <span style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+                  {allRecipes.length} recette{allRecipes.length !== 1 ? "s" : ""}
+                </span>
+              </div>
+              <div className="categories-grid">
+                {categories.map((cat, i) => {
+                  const count = allRecipes.filter((r) => r.category === cat).length;
+                  return (
+                    <Link
+                      key={cat}
+                      href={`/?category=${encodeURIComponent(cat)}`}
+                      className={`cat-card anim-fade-up anim-delay-${i + 1}`}
+                      style={{
+                        display: "flex", flexDirection: "column",
+                        alignItems: "center", justifyContent: "center",
+                        gap: 8, padding: "16px 10px",
+                        border: "1px solid var(--accent)", borderRadius: 10,
+                        textDecoration: "none", color: "var(--ink)",
+                        textAlign: "center", background: "var(--bg)",
+                      }}
+                    >
+                      <span style={{ fontSize: 36 }}>{CATEGORY_EMOJIS[cat]}</span>
+                      <span style={{ fontSize: 13, fontWeight: 600 }}>{cat}</span>
+                      <span style={{ fontSize: 11, color: "var(--ink-muted)" }}>
+                        {count} recette{count !== 1 ? "s" : ""}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+
+            {/* Toutes les recettes — bento grid */}
+            {bentoRecipes.length > 0 && (
+              <section className="anim-fade-up anim-delay-3">
+                <div style={{
+                  display: "flex", alignItems: "baseline",
+                  justifyContent: "space-between",
+                  marginBottom: 20, paddingBottom: 14,
+                  borderBottom: "1px solid var(--line)",
+                }}>
+                  <h2 style={{ fontSize: 20, fontWeight: 700 }}>Toutes les recettes</h2>
+                  <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
+                    {allRecipes.length} recette{allRecipes.length !== 1 ? "s" : ""}
+                  </span>
                 </div>
-              ))}
-            </div>
-          )}
-        </section>
 
+                <div className="bento-wrapper">
+                  {bentoColumns.map((col, colIdx) => {
+                    // Colonnes paires : court en haut / tall en bas
+                    // Colonnes impaires : tall en haut / court en bas
+                    const shortFirst = colIdx % 2 === 0;
+                    return (
+                      <div key={colIdx} className="bento-col">
+                        {col.map((recipe, itemIdx) => {
+                          const isShort = itemIdx === 0 ? shortFirst : !shortFirst;
+                          return (
+                            <Link
+                              key={recipe.id}
+                              href={`/recettes/${recipe.id}`}
+                              className="bento-item"
+                              style={{ flex: isShort ? "140 140 0" : "244 244 0" }}
+                            >
+                              {recipe.image ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={recipe.image}
+                                  alt={recipe.title}
+                                  style={{
+                                    position: "absolute", inset: 0,
+                                    width: "100%", height: "100%", objectFit: "cover",
+                                  }}
+                                />
+                              ) : (
+                                <div style={{
+                                  position: "absolute", inset: 0,
+                                  display: "flex", alignItems: "center", justifyContent: "center",
+                                  fontSize: 52, background: "var(--bg-alt)",
+                                }}>
+                                  {recipe.emoji}
+                                </div>
+                              )}
+                              {/* Gradient sombre depuis le bas */}
+                              <div style={{
+                                position: "absolute", inset: 0,
+                                background: "linear-gradient(to top, rgba(35,40,42,0.85) 0%, transparent 50%)",
+                                pointerEvents: "none",
+                              }} />
+                              {/* Titre */}
+                              <div style={{
+                                position: "absolute", bottom: 14, left: 14, right: 14,
+                              }}>
+                                <p style={{
+                                  color: "white", fontWeight: 700,
+                                  fontSize: 13, lineHeight: 1.3,
+                                }}>
+                                  {recipe.title}
+                                </p>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Voir toutes sur mobile si plus de 10 */}
+                {allRecipes.length > 10 && (
+                  <p style={{ marginTop: 16, fontSize: 13, color: "var(--ink-muted)", textAlign: "center" }}>
+                    + {allRecipes.length - 10} autres — utilisez la recherche ou les catégories
+                  </p>
+                )}
+              </section>
+            )}
+          </>
+        )}
       </main>
 
       <footer style={{
         borderTop: "1px solid var(--line)",
-        padding: 32, textAlign: "center",
+        padding: "24px 20px", textAlign: "center",
         fontSize: 13, color: "var(--ink-muted)",
-      }} className="anim-fade-in">
-        Mijoté · Notre livre de recettes maison
+        display: "flex", alignItems: "center", justifyContent: "center", gap: 20,
+      }}>
+        <span>Mijoté · Notre livre de recettes maison</span>
+        <a
+          href="/api/export"
+          download
+          title="Télécharger une sauvegarde de toutes les recettes"
+          className="footer-backup-link"
+        >
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Sauvegarde
+        </a>
       </footer>
 
       <style>{`
-        @media (max-width: 980px) {
-          .hero-grid { grid-template-columns: 1fr !important; }
-          .cat-grid { grid-template-columns: repeat(3, 1fr) !important; }
-          .recipe-grid { grid-template-columns: repeat(2, 1fr) !important; }
+        /* Grilles */
+        .categories-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
         }
-        @media (max-width: 640px) {
-          .cat-grid { grid-template-columns: repeat(2, 1fr) !important; }
-          .recipe-grid { grid-template-columns: 1fr !important; }
+        .recipe-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
         }
+
+        @media (min-width: 768px) {
+          .categories-grid {
+            grid-template-columns: repeat(6, 1fr);
+          }
+          .recipe-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+          }
+        }
+
+        /* Bento grid — mobile : 2-col CSS grid */
+        .bento-wrapper {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+        }
+        .bento-col {
+          display: contents;
+        }
+        .bento-item {
+          position: relative;
+          border-radius: 10px;
+          overflow: hidden;
+          aspect-ratio: 1;
+          background: var(--bg-alt);
+          display: block;
+          text-decoration: none;
+          transition: transform 0.3s;
+        }
+        .bento-item:hover { transform: scale(1.02); }
+
+        @media (min-width: 768px) {
+          /* Desktop : flex bento à 5 colonnes, hauteur fixe */
+          .bento-wrapper {
+            display: flex;
+            height: 400px;
+            gap: 16px;
+          }
+          .bento-col {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            gap: 16px;
+          }
+          .bento-item {
+            aspect-ratio: auto;
+            border-radius: 8px;
+          }
+        }
+
+        .footer-backup-link {
+          display: inline-flex; align-items: center; gap: 5px;
+          color: var(--ink-muted); text-decoration: none; opacity: 0.5;
+          transition: opacity 0.15s;
+        }
+        .footer-backup-link:hover { opacity: 1; }
+
         @media (prefers-reduced-motion: reduce) {
           *, *::before, *::after {
             animation-duration: 0.01ms !important;

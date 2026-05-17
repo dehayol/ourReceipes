@@ -22,20 +22,28 @@ export default async function RecipePage({ params }: Props) {
   const recipe = await getRecipeById(id);
   if (!recipe) notFound();
 
+  const meta = [
+    { label: "Préparation", value: recipe.prepTime },
+    { label: "Cuisson", value: recipe.cookTime },
+    { label: "Total", value: recipe.totalTime },
+    { label: "Portions", value: recipe.servings },
+    { label: "Difficulté", value: recipe.difficulty },
+  ];
+
   return (
     <>
       <Header />
 
-      <main style={{ maxWidth: 860, margin: "0 auto", padding: "48px 32px 80px" }}>
+      <main style={{ maxWidth: 860, margin: "0 auto", padding: "32px 20px 80px" }}>
 
         {/* Breadcrumb */}
-        <nav
-          className="anim-fade-in no-print"
-          style={{ marginBottom: 32, fontSize: 14, color: "var(--ink-muted)" }}
-        >
-          <Link href="/" style={{ color: "var(--ink-muted)", textDecoration: "none", transition: "color 0.15s" }}>Accueil</Link>
+        <nav className="anim-fade-in no-print" style={{ marginBottom: 28, fontSize: 13, color: "var(--ink-muted)" }}>
+          <Link href="/" style={{ color: "var(--ink-muted)", textDecoration: "none" }}>Accueil</Link>
           <span style={{ margin: "0 8px" }}>›</span>
-          <Link href={`/?category=${encodeURIComponent(recipe.category)}`} style={{ color: "var(--ink-muted)", textDecoration: "none", transition: "color 0.15s" }}>
+          <Link
+            href={`/?category=${encodeURIComponent(recipe.category)}`}
+            style={{ color: "var(--ink-muted)", textDecoration: "none" }}
+          >
             {recipe.category}
           </Link>
           <span style={{ margin: "0 8px" }}>›</span>
@@ -43,47 +51,68 @@ export default async function RecipePage({ params }: Props) {
         </nav>
 
         {/* Header recette */}
-        <header className="anim-fade-up" style={{ marginBottom: 40 }}>
+        <header className="anim-fade-up" style={{ marginBottom: 32 }}>
           <div style={{
-            fontSize: 11, textTransform: "uppercase", letterSpacing: "0.1em",
-            color: "var(--accent)", fontWeight: 500, marginBottom: 12,
+            display: "inline-block",
+            padding: "4px 12px", borderRadius: 100,
+            border: "1px solid var(--accent)",
+            fontSize: 12, fontWeight: 600, color: "var(--accent)",
+            marginBottom: 14,
           }}>
             {recipe.category}
           </div>
+
           <h1 style={{
-            fontFamily: "'Fraunces', serif",
-            fontSize: "clamp(32px, 4vw, 52px)",
-            fontWeight: 400, lineHeight: 1.1,
-            letterSpacing: "-0.02em", marginBottom: 20,
+            fontSize: "clamp(28px, 5vw, 48px)",
+            fontWeight: 700, lineHeight: 1.1,
+            letterSpacing: "-0.02em", marginBottom: 16,
           }}>
             {recipe.title}
           </h1>
-          <p style={{ fontSize: 17, color: "var(--ink-soft)", maxWidth: 620, marginBottom: 28, lineHeight: 1.6 }}>
+
+          <p style={{
+            fontSize: 16, color: "var(--ink-soft)",
+            maxWidth: 600, marginBottom: 28, lineHeight: 1.65,
+          }}>
             {recipe.description}
           </p>
 
-          {/* Meta */}
-          <div style={{
-            display: "flex", flexWrap: "wrap", gap: 20,
-            padding: "20px 0", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)",
-            marginBottom: 16,
-          }}>
-            {[
-              { label: "Préparation", value: recipe.prepTime },
-              { label: "Cuisson", value: recipe.cookTime },
-              { label: "Total", value: recipe.totalTime },
-              { label: "Portions", value: recipe.servings },
-              { label: "Difficulté", value: recipe.difficulty },
-            ].map(({ label, value }, i) => (
-              <div key={label} className={`anim-fade-up anim-delay-${i + 1}`}>
-                <div style={{ fontSize: 11, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ink-muted)", marginBottom: 4 }}>{label}</div>
-                <div style={{ fontWeight: 500, fontSize: 15 }}>{value}</div>
+          {/* Meta strip */}
+          <div
+            className="scroll-x"
+            style={{
+              display: "flex",
+              borderTop: "1px solid var(--line)",
+              borderBottom: "1px solid var(--line)",
+              marginBottom: 28,
+            }}
+          >
+            {meta.map(({ label, value }, i) => (
+              <div
+                key={label}
+                style={{
+                  display: "flex", flexDirection: "column", gap: 4,
+                  padding: "14px 24px",
+                  borderRight: i < meta.length - 1 ? "1px solid var(--line)" : "none",
+                  flexShrink: 0,
+                }}
+              >
+                <span style={{
+                  fontSize: 10, fontWeight: 700, textTransform: "uppercase",
+                  letterSpacing: "0.08em", color: "var(--ink-muted)",
+                  whiteSpace: "nowrap",
+                }}>
+                  {label}
+                </span>
+                <span style={{ fontWeight: 700, fontSize: 14, color: "var(--ink)", whiteSpace: "nowrap" }}>
+                  {value}
+                </span>
               </div>
             ))}
           </div>
 
           {/* Actions */}
-          <div className="anim-fade-up anim-delay-3 no-print" style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <div className="no-print" style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
             <PrintButton />
             <Link
               href={`/admin/edit/${recipe.id}`}
@@ -92,8 +121,7 @@ export default async function RecipePage({ params }: Props) {
                 padding: "10px 18px", borderRadius: 100,
                 border: "1px solid var(--line)",
                 background: "transparent", color: "var(--ink)",
-                textDecoration: "none", fontSize: 14, fontWeight: 500,
-                transition: "border-color 0.2s, background 0.2s",
+                textDecoration: "none", fontSize: 13, fontWeight: 600,
               }}
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -108,23 +136,28 @@ export default async function RecipePage({ params }: Props) {
         {/* Image */}
         {recipe.image && (
           <div className="anim-scale-in anim-delay-2" style={{
-            borderRadius: 8, overflow: "hidden",
-            marginBottom: 48, aspectRatio: "16 / 9",
+            borderRadius: 10,
+            border: "1px solid var(--accent)",
+            overflow: "hidden",
+            marginBottom: 40, aspectRatio: "16 / 9",
           }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={recipe.image} alt={recipe.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            <img
+              src={recipe.image}
+              alt={recipe.title}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
           </div>
         )}
 
-        {/* Content grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: 48 }}>
+        {/* Content grid : ingrédients + étapes */}
+        <div className="recipe-content-grid anim-fade-up anim-delay-3">
 
           {/* Ingrédients */}
-          <div className="anim-fade-up anim-delay-3">
+          <div>
             <h2 style={{
-              fontFamily: "'Fraunces', serif", fontSize: 22,
-              fontWeight: 400, letterSpacing: "-0.01em",
-              marginBottom: 20, paddingBottom: 12,
+              fontSize: 18, fontWeight: 700,
+              marginBottom: 16, paddingBottom: 12,
               borderBottom: "1px solid var(--line)",
             }}>
               Ingrédients
@@ -135,11 +168,13 @@ export default async function RecipePage({ params }: Props) {
                   key={i}
                   className={`ingredient-row anim-delay-${Math.min(i + 3, 9)}`}
                   style={{
-                    display: "flex", gap: 12, fontSize: 15,
+                    display: "flex", gap: 12, fontSize: 14,
                     paddingBottom: 10, borderBottom: "1px solid var(--line)",
                   }}
                 >
-                  <span style={{ fontWeight: 600, color: "var(--accent)", minWidth: 60 }}>{ing.quantity}</span>
+                  <span style={{ fontWeight: 700, color: "var(--accent)", minWidth: 56, flexShrink: 0 }}>
+                    {ing.quantity}
+                  </span>
                   <span style={{ color: "var(--ink-soft)" }}>{ing.item}</span>
                 </li>
               ))}
@@ -147,11 +182,10 @@ export default async function RecipePage({ params }: Props) {
           </div>
 
           {/* Étapes */}
-          <div className="anim-fade-up anim-delay-4">
+          <div>
             <h2 style={{
-              fontFamily: "'Fraunces', serif", fontSize: 22,
-              fontWeight: 400, letterSpacing: "-0.01em",
-              marginBottom: 20, paddingBottom: 12,
+              fontSize: 18, fontWeight: 700,
+              marginBottom: 16, paddingBottom: 12,
               borderBottom: "1px solid var(--line)",
             }}>
               Préparation
@@ -161,19 +195,21 @@ export default async function RecipePage({ params }: Props) {
                 <li
                   key={i}
                   className={`step-row anim-delay-${Math.min(i + 4, 9)}`}
-                  style={{ display: "flex", gap: 16 }}
+                  style={{ display: "flex", gap: 14 }}
                 >
                   <span style={{
-                    minWidth: 32, height: 32,
+                    minWidth: 30, height: 30,
                     background: "var(--accent)", color: "white",
                     borderRadius: "50%",
                     display: "inline-flex", alignItems: "center", justifyContent: "center",
-                    fontWeight: 600, fontSize: 14, flexShrink: 0, marginTop: 2,
-                    transition: "transform 0.2s ease",
+                    fontWeight: 700, fontSize: 13, flexShrink: 0, marginTop: 3,
                   }}>
                     {i + 1}
                   </span>
-                  <p style={{ fontSize: 15, lineHeight: 1.7, color: "var(--ink-soft)", paddingTop: 4 }}>
+                  <p style={{
+                    fontSize: 15, lineHeight: 1.7,
+                    color: "var(--ink-soft)", paddingTop: 2,
+                  }}>
                     {step}
                   </p>
                 </li>
@@ -182,34 +218,43 @@ export default async function RecipePage({ params }: Props) {
 
             {recipe.notes && (
               <div className="anim-fade-up anim-delay-6" style={{
-                marginTop: 32, padding: "20px 24px",
-                background: "var(--bg-alt)", borderRadius: 8,
+                marginTop: 32, padding: "18px 20px",
+                background: "var(--bg-alt)", borderRadius: 10,
                 borderLeft: "3px solid var(--accent)",
               }}>
-                <p style={{ fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--accent)", marginBottom: 8 }}>
+                <p style={{
+                  fontSize: 11, fontWeight: 700, textTransform: "uppercase",
+                  letterSpacing: "0.08em", color: "var(--accent)", marginBottom: 8,
+                }}>
                   Notes
                 </p>
-                <p style={{ fontSize: 14, color: "var(--ink-soft)", lineHeight: 1.7 }}>{recipe.notes}</p>
+                <p style={{ fontSize: 14, color: "var(--ink-soft)", lineHeight: 1.7 }}>
+                  {recipe.notes}
+                </p>
               </div>
             )}
           </div>
-
         </div>
-
       </main>
 
       <footer className="anim-fade-in no-print" style={{
         borderTop: "1px solid var(--line)",
-        padding: 32, textAlign: "center",
+        padding: "24px 20px", textAlign: "center",
         fontSize: 13, color: "var(--ink-muted)",
       }}>
         Mijoté · Notre livre de recettes maison
       </footer>
 
       <style>{`
-        @media (max-width: 700px) {
-          main > div:last-of-type {
-            grid-template-columns: 1fr !important;
+        .recipe-content-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 40px;
+        }
+        @media (min-width: 640px) {
+          .recipe-content-grid {
+            grid-template-columns: 1fr 2fr;
+            gap: 48px;
           }
         }
         @media (prefers-reduced-motion: reduce) {
