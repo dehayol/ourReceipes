@@ -289,6 +289,7 @@ export default async function HomePage({ searchParams }: Props) {
         fontSize: 13, color: "var(--ink-muted)",
         display: "flex", alignItems: "center", justifyContent: "center", gap: 20,
       }}>
+
         <span>Mijoté · Notre livre de recettes maison</span>
         <a
           href="/api/export"
@@ -306,6 +307,13 @@ export default async function HomePage({ searchParams }: Props) {
       </footer>
 
       <style>{`
+        .footer-backup-link {
+          display: inline-flex; align-items: center; gap: 5px;
+          color: var(--ink-muted); text-decoration: none; opacity: 0.5;
+          transition: opacity 0.15s;
+        }
+        .footer-backup-link:hover { opacity: 1; }
+
         /* Grilles */
         .categories-grid {
           display: grid;
