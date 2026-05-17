@@ -259,6 +259,25 @@ export default function Header() {
             <SearchIcon />
           </button>
 
+          {/* Backoffice — desktop only */}
+          <Link
+            href="/admin"
+            className="header-icon-btn header-admin-btn"
+            aria-label="Backoffice"
+            style={{
+              display: "flex", alignItems: "center",
+              color: "var(--ink)", textDecoration: "none",
+              padding: "6px", borderRadius: 8,
+            }}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+          </Link>
+
           {/* Add recipe */}
           <Link
             href="/admin/new"
@@ -293,10 +312,12 @@ export default function Header() {
         .header-search-desktop { display: none !important; }
         .header-search-mobile-btn { display: flex !important; }
         .header-search-panel { display: block; }
+        .header-admin-btn { display: none !important; }
         @media (min-width: 768px) {
           .header-search-desktop { display: block !important; }
           .header-search-mobile-btn { display: none !important; }
           .header-search-panel { display: none !important; }
+          .header-admin-btn { display: flex !important; }
         }
       `}</style>
     </header>
