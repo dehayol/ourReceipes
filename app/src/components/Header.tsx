@@ -4,6 +4,26 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect, useCallback } from "react";
 
+function useShoppingCount() {
+  const [count, setCount] = useState(0);
+
+  const refresh = useCallback(async () => {
+    try {
+      const res = await fetch("/api/shopping-list");
+      const data = await res.json() as unknown[];
+      setCount(Array.isArray(data) ? data.length : 0);
+    } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => {
+    refresh();
+    window.addEventListener("shopping-list-updated", refresh);
+    return () => window.removeEventListener("shopping-list-updated", refresh);
+  }, [refresh]);
+
+  return count;
+}
+
 interface Suggestion {
   id: string;
   title: string;
@@ -205,6 +225,7 @@ function SearchBox({ onSubmit, autoFocus, inputStyle, wrapperStyle }: SearchBoxP
 export default function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const router = useRouter();
+  const shoppingCount = useShoppingCount();
 
   const handleSubmit = (q: string) => {
     router.push(q.trim() ? `/?q=${encodeURIComponent(q.trim())}` : "/");
@@ -258,6 +279,35 @@ export default function Header() {
           >
             <SearchIcon />
           </button>
+
+          {/* Shopping list */}
+          <Link
+            href="/liste"
+            className="header-icon-btn"
+            aria-label="Liste de courses"
+            style={{
+              display: "flex", alignItems: "center",
+              color: "var(--ink)", textDecoration: "none",
+              padding: "6px", borderRadius: 8, position: "relative",
+            }}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+              <path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            {shoppingCount > 0 && (
+              <span style={{
+                position: "absolute", top: 2, right: 2,
+                width: 16, height: 16, borderRadius: "50%",
+                background: "var(--accent)", color: "white",
+                fontSize: 10, fontWeight: 700,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                lineHeight: 1,
+              }}>
+                {shoppingCount > 9 ? "9+" : shoppingCount}
+              </span>
+            )}
+          </Link>
 
           {/* Backoffice — desktop only */}
           <Link
