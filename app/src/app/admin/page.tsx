@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Link from "next/link";
 import AdminAuthGate from "@/components/AdminAuthGate";
 import ImportRecipeButton from "@/components/ImportRecipeButton";
+import RestoreBackupButton from "@/components/RestoreBackupButton";
 
 export default async function AdminPage() {
   const recipes = await getAllRecipes();
@@ -59,6 +60,27 @@ export default async function AdminPage() {
                 </p>
               </div>
               <ImportRecipeButton />
+            </div>
+
+            {/* Restaurer depuis un backup ZIP */}
+            <div style={{
+              padding: "20px 24px",
+              background: "var(--bg-alt)",
+              borderRadius: 10,
+              border: "1px solid var(--line)",
+              display: "flex", alignItems: "center", gap: 20,
+              flexWrap: "wrap",
+              marginTop: 12,
+            }}>
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <p style={{ fontWeight: 500, fontSize: 14, marginBottom: 4 }}>
+                  Restaurer depuis une sauvegarde
+                </p>
+                <p style={{ fontSize: 13, color: "var(--ink-muted)", lineHeight: 1.5 }}>
+                  Uploade un fichier .zip exporté depuis le footer — toutes les recettes actuelles seront remplacées.
+                </p>
+              </div>
+              <RestoreBackupButton />
             </div>
           </div>
 
