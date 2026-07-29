@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import PrintButton from "@/components/PrintButton";
 import DeleteButton from "@/components/DeleteButton";
 import AddToListButton from "@/components/AddToListButton";
+import RecipeContent from "@/components/RecipeContent";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -152,91 +153,12 @@ export default async function RecipePage({ params }: Props) {
           </div>
         )}
 
-        {/* Content grid : ingrédients + étapes */}
-        <div className="recipe-content-grid anim-fade-up anim-delay-3">
-
-          {/* Ingrédients */}
-          <div>
-            <h2 style={{
-              fontSize: 18, fontWeight: 700,
-              marginBottom: 16, paddingBottom: 12,
-              borderBottom: "1px solid var(--line)",
-            }}>
-              Ingrédients
-            </h2>
-            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
-              {recipe.ingredients.map((ing, i) => (
-                <li
-                  key={i}
-                  className={`ingredient-row anim-delay-${Math.min(i + 3, 9)}`}
-                  style={{
-                    display: "flex", gap: 12, fontSize: 14,
-                    paddingBottom: 10, borderBottom: "1px solid var(--line)",
-                  }}
-                >
-                  <span style={{ fontWeight: 700, color: "var(--accent)", minWidth: 56, flexShrink: 0 }}>
-                    {ing.quantity}
-                  </span>
-                  <span style={{ color: "var(--ink-soft)" }}>{ing.item}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Étapes */}
-          <div>
-            <h2 style={{
-              fontSize: 18, fontWeight: 700,
-              marginBottom: 16, paddingBottom: 12,
-              borderBottom: "1px solid var(--line)",
-            }}>
-              Préparation
-            </h2>
-            <ol style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 20 }}>
-              {recipe.steps.map((step, i) => (
-                <li
-                  key={i}
-                  className={`step-row anim-delay-${Math.min(i + 4, 9)}`}
-                  style={{ display: "flex", gap: 14 }}
-                >
-                  <span style={{
-                    minWidth: 30, height: 30,
-                    background: "var(--accent)", color: "white",
-                    borderRadius: "50%",
-                    display: "inline-flex", alignItems: "center", justifyContent: "center",
-                    fontWeight: 700, fontSize: 13, flexShrink: 0, marginTop: 3,
-                  }}>
-                    {i + 1}
-                  </span>
-                  <p style={{
-                    fontSize: 15, lineHeight: 1.7,
-                    color: "var(--ink-soft)", paddingTop: 2,
-                  }}>
-                    {step}
-                  </p>
-                </li>
-              ))}
-            </ol>
-
-            {recipe.notes && (
-              <div className="anim-fade-up anim-delay-6" style={{
-                marginTop: 32, padding: "18px 20px",
-                background: "var(--bg-alt)", borderRadius: 10,
-                borderLeft: "3px solid var(--accent)",
-              }}>
-                <p style={{
-                  fontSize: 11, fontWeight: 700, textTransform: "uppercase",
-                  letterSpacing: "0.08em", color: "var(--accent)", marginBottom: 8,
-                }}>
-                  Notes
-                </p>
-                <p style={{ fontSize: 14, color: "var(--ink-soft)", lineHeight: 1.7 }}>
-                  {recipe.notes}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
+        {/* Content : ingrédients + étapes */}
+        <RecipeContent
+          ingredients={recipe.ingredients}
+          steps={recipe.steps}
+          notes={recipe.notes}
+        />
       </main>
 
       <footer className="anim-fade-in no-print" style={{
@@ -248,17 +170,6 @@ export default async function RecipePage({ params }: Props) {
       </footer>
 
       <style>{`
-        .recipe-content-grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 40px;
-        }
-        @media (min-width: 640px) {
-          .recipe-content-grid {
-            grid-template-columns: 1fr 2fr;
-            gap: 48px;
-          }
-        }
         @media (prefers-reduced-motion: reduce) {
           *, *::before, *::after {
             animation-duration: 0.01ms !important;
